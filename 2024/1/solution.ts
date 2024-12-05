@@ -1,6 +1,8 @@
 // https://adventofcode.com/2024/day/1
 
-const input = await Deno.readTextFile(`${Deno.cwd()}/2024/1/input.txt`);
+import { getInput } from "../../util.ts";
+
+const input = await getInput(import.meta);
 
 const lines = input.split('\n');
 const [list1, list2] = [0, 1].map(i => lines.map(line => +line.split('   ')[i]).sort((a, b) => +a - +b));
