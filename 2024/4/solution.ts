@@ -1,17 +1,17 @@
 // https://adventofcode.com/2024/day/4
 
-import { getInput } from "../../util.ts";
+import { getInput, getLineSeparator } from "../../util.ts";
 
 const input = await getInput(import.meta);
 
-const grid = input.split('\n').map(line => line.split(''));
+const grid = input.split(getLineSeparator()).map(line => line.split(''));
 
 let totalXmases = 0;
 
 // Part 1
 
 // Horizontal
-for (const line of input.split('\n')) {
+for (const line of input.split(getLineSeparator())) {
     totalXmases += line.matchAll(/XMAS/g).toArray().length + line.matchAll(/SAMX/g).toArray().length;
 }
 console.log('Part 1 Horizontal:', totalXmases);

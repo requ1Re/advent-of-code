@@ -1,10 +1,10 @@
 // https://adventofcode.com/2024/day/1
 
-import { getInput } from "../../util.ts";
+import { getInput, getLineSeparator } from "../../util.ts";
 
 const input = await getInput(import.meta);
 
-const lines = input.split('\n');
+const lines = input.split(getLineSeparator());
 const [list1, list2] = [0, 1].map(i => lines.map(line => +line.split('   ')[i]).sort((a, b) => +a - +b));
 
 // Part 1

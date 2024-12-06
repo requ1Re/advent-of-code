@@ -1,9 +1,9 @@
 // https://adventofcode.com/2024/day/2
 
-import { getInput } from "../../util.ts";
+import { getInput, getLineSeparator } from "../../util.ts";
 
 const input = await getInput(import.meta);
-const lines = input.split('\n');
+const lines = input.split(getLineSeparator());
 
 let safeReports = 0;
 
