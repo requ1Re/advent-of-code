@@ -1,8 +1,8 @@
 import * as path from "jsr:@std/path";
 import * as mod from "node:os";
 
-export async function getInput(importMeta: ImportMeta): Promise<string> {
-    return await Deno.readTextFile(`${getModuleDir(importMeta)}/input.txt`);
+export async function getInput(importMeta: ImportMeta, sample: boolean = false): Promise<string> {
+    return await Deno.readTextFile(`${getModuleDir(importMeta)}/input${sample ? '_sample' : ''}.txt`);
 }
 
 function getModuleDir(importMeta: ImportMeta): string {

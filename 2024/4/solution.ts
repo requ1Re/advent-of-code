@@ -2,7 +2,7 @@
 
 import { getInput, getLineSeparator } from "../../util.ts";
 
-const input = await getInput(import.meta);
+const input = await getInput(import.meta, true);
 
 const grid = input.split(getLineSeparator()).map(line => line.split(''));
 

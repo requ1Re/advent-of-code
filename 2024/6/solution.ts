@@ -1,16 +1,16 @@
 // https://adventofcode.com/2024/day/6
 
-import { scheduler } from 'node:timers/promises';
+// import { scheduler } from 'node:timers/promises';
 import { getInput, getLineSeparator } from '../../util.ts';
 
 enum Direction {
-  Up,
-  Down,
-  Left,
-  Right,
+  up,
+  down,
+  left,
+  right,
 }
-
-const input = await getInput(import.meta);
+console.time('part1');
+const input = await getInput(import.meta, false);
 
 const lines = input.split(getLineSeparator());
 const lineLength = lines[0].length;
@@ -20,113 +20,115 @@ let grid = lines.map((line) => line.split(''));
 const startPositionY = lines.findIndex((line) => line.includes('^'));
 const startPositionX = lines[startPositionY].indexOf('^');
 
-let currentPositionX = startPositionX;
-let currentPositionY = startPositionY;
-let currentDirection: Direction = Direction.Up;
+let curPosX = startPositionX;
+let curPosY = startPositionY;
+let curDir: Direction = Direction.up;
 
-while (currentPositionX > 0 && currentPositionX < lineLength && currentPositionY > 0 && currentPositionY < lines.length - 1) {
-  grid[currentPositionY][currentPositionX] = 'X';
+while (curPosX > 0 && curPosX < lineLength && curPosY > 0 && curPosY < lines.length - 1) {
+  grid[curPosY][curPosX] = 'X';
 
-  if (currentDirection === Direction.Up) currentPositionY--;
-  if (currentDirection === Direction.Down) currentPositionY++;
-  if (currentDirection === Direction.Left) currentPositionX--;
-  if (currentDirection === Direction.Right) currentPositionX++;
+  if (curDir === Direction.up) curPosY--;
+  if (curDir === Direction.down) curPosY++;
+  if (curDir === Direction.left) curPosX--;
+  if (curDir === Direction.right) curPosX++;
 
-  if (grid[currentPositionY][currentPositionX] === '#') {
+  if (grid[curPosY][curPosX] === '#') {
     // obstacle
-    if (currentDirection === Direction.Up) {
-      currentDirection = Direction.Right;
-      currentPositionY++;
-    } else if (currentDirection === Direction.Down) {
-      currentDirection = Direction.Left;
-      currentPositionY--;
-    } else if (currentDirection === Direction.Left) {
-      currentDirection = Direction.Up;
-      currentPositionX++;
-    } else if (currentDirection === Direction.Right) {
-      currentDirection = Direction.Down;
-      currentPositionX--;
+    if (curDir === Direction.up) {
+      curDir = Direction.right;
+      curPosY++;
+    } else if (curDir === Direction.down) {
+      curDir = Direction.left;
+      curPosY--;
+    } else if (curDir === Direction.left) {
+      curDir = Direction.up;
+      curPosX++;
+    } else if (curDir === Direction.right) {
+      curDir = Direction.down;
+      curPosX--;
     }
   } else {
-    grid[currentPositionY][currentPositionX] = '^';
+    grid[curPosY][curPosX] = '^';
   }
 
-  /*
-  const sliceMin = currentPositionY-20;
-  const sliceMax = currentPositionY+20;
-  console.clear();
-  console.log(grid.map(line => line.join('')).slice(sliceMin >= 0 ? sliceMin : 0, sliceMax < grid.length ? sliceMax : grid.length-1).join(getLineSeparator()));
 
-  await scheduler.wait(5);
-  */
+  // const sliceMin = curPosY-20;
+  // const sliceMax = curPosY+20;
+  // console.clear();
+  // console.log(grid.map(line => line.join('')).slice(sliceMin >= 0 ? sliceMin : 0, sliceMax < grid.length ? sliceMax : grid.length-1).join(getLineSeparator()));
+
+  // const linesWithX = grid.map((line) => line.join()).filter((line) => line.includes('X'));
+  // const sumPart1 = linesWithX.map((line) => (line.match(/X/g) || []).length).reduce((sum, current) => sum + current, 0);
+  // console.log(sumPart1, traversedPositionsAndRotation.length)
+  // await scheduler.wait(100);
 }
 
+console.timeEnd('part1');
+
 const linesWithX = grid.map((line) => line.join()).filter((line) => line.includes('X'));
-const sumPart1 = linesWithX.map((line) => (line.match(/X/g) || []).length).reduce((sum, curr) => sum + curr, 0);
+const sumPart1 = linesWithX.map((line) => (line.match(/X/g) || []).length).reduce((sum, current) => sum + current, 0);
+
+console.log('Part 1:', sumPart1 + 1); // +1 to account for last position
 
 // Part 2
 grid = lines.map((line) => line.split(''));
-currentPositionX = startPositionX;
-currentPositionY = startPositionY;
-currentDirection = Direction.Up;
+curPosX = startPositionX;
+curPosY = startPositionY;
+curDir = Direction.up;
 
-let possibleObstacles: { x: number; y: number }[] = [];
+console.time('part2');
 
-while (currentPositionX > 0 && currentPositionX < lineLength && currentPositionY > 0 && currentPositionY < lines.length - 1) {
-  if (currentDirection === Direction.Up) {
-    grid[currentPositionY][currentPositionX] = '|';
+let loops = 0;
 
-    currentPositionY--;
-  }
-  if (currentDirection === Direction.Down) {
-    grid[currentPositionY][currentPositionX] = '|';
+// BRUTEFORCE IT X)
+for (let y = 0; y < grid.length; y++) {
+  const line = grid[y];
+  for (let x = 0; x < line.length; x++) {
+    grid = lines.map((line) => line.split(''));
+    curPosX = startPositionX;
+    curPosY = startPositionY;
+    curDir = Direction.up;
 
-    currentPositionY++;
-  }
-  if (currentDirection === Direction.Left) {
-    grid[currentPositionY][currentPositionX] = '-';
+    grid[y][x] = 'O';
 
-    currentPositionX--;
-  }
-  if (currentDirection === Direction.Right) {
-    grid[currentPositionY][currentPositionX] = '-';
+    const traversedPositionsAndRotationCache: { x: number, y: number, dir: Direction }[] = [];
+    while (curPosX > 0 && curPosX < lineLength && curPosY > 0 && curPosY < lines.length - 1) {
+      grid[curPosY][curPosX] = 'X';
 
-    currentPositionX++;
-  }
+      if (curDir === Direction.up) curPosY--;
+      if (curDir === Direction.down) curPosY++;
+      if (curDir === Direction.left) curPosX--;
+      if (curDir === Direction.right) curPosX++;
 
-  if (grid[currentPositionY][currentPositionX] === '#') {
-    // obstacle
-    if (currentDirection === Direction.Up) {
-      currentDirection = Direction.Right;
-      currentPositionY++;
-    } else if (currentDirection === Direction.Down) {
-      currentDirection = Direction.Left;
-      currentPositionY--;
-    } else if (currentDirection === Direction.Left) {
-      currentDirection = Direction.Up;
-      currentPositionX++;
-    } else if (currentDirection === Direction.Right) {
-      currentDirection = Direction.Down;
-      currentPositionX--;
+      if (traversedPositionsAndRotationCache.find(item => item.x === curPosX && item.y === curPosY && item.dir === curDir)) {
+        // loop
+        loops++;
+        break;
+      }
+
+      if (grid[curPosY][curPosX] === '#' || grid[curPosY][curPosX] === 'O') {
+        // obstacle
+        if (curDir === Direction.up) {
+          curDir = Direction.right;
+          curPosY++;
+        } else if (curDir === Direction.down) {
+          curDir = Direction.left;
+          curPosY--;
+        } else if (curDir === Direction.left) {
+          curDir = Direction.up;
+          curPosX++;
+        } else if (curDir === Direction.right) {
+          curDir = Direction.down;
+          curPosX--;
+        }
+      } else {
+        grid[curPosY][curPosX] = '^';
+      }
+
+      traversedPositionsAndRotationCache.push({ x: curPosX, y: curPosY, dir: curDir });
     }
-    
-    grid[currentPositionY][currentPositionX] = '+';
-  } else {
-    grid[currentPositionY][currentPositionX] = '^';
   }
-
-  const sliceMin = currentPositionY - 20;
-  const sliceMax = currentPositionY + 20;
-  console.clear();
-  console.log(
-    grid
-      .map((line) => line.join(''))
-      .slice(sliceMin >= 0 ? sliceMin : 0, sliceMax < grid.length ? sliceMax : grid.length - 1)
-      .join(getLineSeparator())
-  );
-
-  await scheduler.wait(50);
 }
 
-console.log('Part 1:', sumPart1 + 1); // +1 to account for last position
-console.log('Part 2:', possibleObstacles.length); // +1 to account for last position
+console.timeEnd('part2');
+console.log('Part 2:', loops);
