@@ -15,6 +15,7 @@ const input = await getInput(import.meta, false);
 const lines = input.split(getLineSeparator());
 const lineLength = lines[0].length;
 
+const positionsWithX: { x: number, y: number }[] = [];
 // Part 1
 let grid = lines.map((line) => line.split(''));
 const startPositionY = lines.findIndex((line) => line.includes('^'));
@@ -26,6 +27,7 @@ let curDir: Direction = Direction.up;
 
 while (curPosX > 0 && curPosX < lineLength && curPosY > 0 && curPosY < lines.length - 1) {
   grid[curPosY][curPosX] = 'X';
+  if(!positionsWithX.find(p => p.x === curPosX && p.y === curPosY)) positionsWithX.push({x: curPosX, y: curPosY});
 
   if (curDir === Direction.up) curPosY--;
   if (curDir === Direction.down) curPosY++;
@@ -70,6 +72,7 @@ const sumPart1 = linesWithX.map((line) => (line.match(/X/g) || []).length).reduc
 
 console.log('Part 1:', sumPart1 + 1); // +1 to account for last position
 
+
 // Part 2
 grid = lines.map((line) => line.split(''));
 curPosX = startPositionX;
@@ -80,10 +83,14 @@ console.time('part2');
 
 let loops = 0;
 
+
 // BRUTEFORCE IT X)
 for (let y = 0; y < grid.length; y++) {
   const line = grid[y];
+  
   for (let x = 0; x < line.length; x++) {
+    if(!positionsWithX.find(p => p.x === x && p.y === y)) continue;
+
     grid = lines.map((line) => line.split(''));
     curPosX = startPositionX;
     curPosY = startPositionY;
