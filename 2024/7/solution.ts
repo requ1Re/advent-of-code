@@ -10,32 +10,37 @@ console.time('part1');
 console.log('Part 1:', solve(lines));
 console.timeEnd('part1');
 
+// Part 2
+console.time('part2');
+console.log('Part 2:', solve(lines, ['+', '*', '|']));
+console.timeEnd('part2');
+
 function solve(lines: string[], operators = ['+', '*']): number {
     let totalSum = 0;
     for (const line of lines) {
-        const spl = line.split(': ');
-        const target = +spl[0];
-        const numbers = spl[1].split(' ').map(i => +i);
+        const splitLine = line.split(': ');
+        const target = +splitLine[0];
+        const numbers = splitLine[1].split(' ').map(i => +i);
 
         const listOfPossibleCombinations = generateCombinations(numbers.length - 1, operators);
-
         for (const p of listOfPossibleCombinations) {
             let sum = numbers[0];
 
             for (let i = 0; i < numbers.length; i++) {
                 if (numbers.length <= i) continue;
-                const num2 = numbers[i + 1];
+                const nextNum = numbers[i + 1];
                 const operator = p[i];
 
                 if (operator === '+') {
-                    sum += num2;
+                    sum += nextNum;
                 } else if (operator === '*') {
-                    sum *= num2;
+                    sum *= nextNum;
+                } else if (operator === '|') {
+                    sum = +(`${sum}${nextNum}`);
                 }
             }
 
             if (sum === target) {
-                console.log('Match', sum);
                 totalSum += sum;
                 break;
             }
