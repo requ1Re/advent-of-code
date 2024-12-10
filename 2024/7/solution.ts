@@ -15,7 +15,7 @@ console.time('part2');
 console.log('Part 2:', solve(lines, ['+', '*', '|']));
 console.timeEnd('part2');
 
-function solve(lines: string[], operators = ['+', '*']): number {
+export function solve(lines: string[], operators = ['+', '*']): number {
     let totalSum = 0;
     for (const line of lines) {
         const splitLine = line.split(': ');
